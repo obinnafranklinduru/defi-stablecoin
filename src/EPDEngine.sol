@@ -23,6 +23,7 @@ contract EPDEngine is ReentrancyGuard {
 
     mapping(address token => address priceFeed) private priceFeeds;
     mapping(address user => mapping(address token => uint256 amount)) private collateralDeposited;
+    mapping(address user => uint256 amountEPDMinted) private EPDMinted;  
 
     event CollateralDeposited(address indexed user, address indexed token, uint256 amount);
 
@@ -74,11 +75,28 @@ contract EPDEngine is ReentrancyGuard {
      * @param _amountEPDToMint The amount of EPD tokens to mint
      * @notice User must have more collateral value than the minimum threshold
      */
-    function mintEPD(uint256 _amountEPDToMint) external notZero(_amountEPDToMint) {}
+    function mintEPD(uint256 _amountEPDToMint) external notZero(_amountEPDToMint) {
+        EPDMinted[msg.sender] += _amountEPDToMint;
+    }
 
     function burnEPD() external {}
 
     function liquidate() external {}
 
     function getHealthFactor() external view {}
+
+    function _healthFactor(address user) private view returns(uint256) {
+        // Calculate the health factor of the user
+        // Health factor = (collateralValue * collateralRatio) / EPDValue
+        // Collateral value = sum of all collateral values in USD
+        // EPD value = sum of all EPD values in USD
+        // Collateral ratio = 150%
+    }
+
+    function _revertIfHealthFactorIsBroken(address _user) internal view {
+        // Check if health factor is below the threshold
+        // If it is, revert the transaction
+
+
+    }
 }
